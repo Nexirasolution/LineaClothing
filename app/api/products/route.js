@@ -10,6 +10,7 @@ import { generateSku } from '@/lib/sku';
 
 // GET /api/products?category=slug&size=M&minPrice=0&maxPrice=2000&sort=newest&page=1&limit=20&flag=bestseller
 // Pass limit=all to skip pagination entirely and return every matching product.
+// Pass flag=newarrival to power the "New Launches" listing (30 -> 90 day -> newest fallback).
 export async function GET(req) {
   try {
     await dbConnect();
@@ -50,7 +51,7 @@ export async function GET(req) {
     if (flag === 'active') query.isActiveSeller = true;
     if (flag === 'featured') query.isFeatured = true;
 
-    // "New Arrivals" hybrid fallback:
+    // "New Arrivals" / "New Launches" hybrid fallback:
     // 1. Try last 30 days within the current query scope (category/size/price already applied).
     // 2. If nothing, widen to 90 days.
     // 3. If still nothing, drop the date filter entirely — customer sees the

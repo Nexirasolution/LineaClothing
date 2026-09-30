@@ -195,10 +195,12 @@ export default function Navbar() {
               </nav>
             </div>
 
-            {/* Center: logo (scales down on small screens) */}
+            {/* Center: logo — bigger than before (was 56 / 80 / 96px).
+                Now 112px on mobile (with -my-2 so the header bar doesn't
+                grow too tall) and 128px on tablet/desktop. */}
             <Link href="/" className="flex items-center justify-self-center">
-              <div className="relative w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24">
-                <Image src="/logo.png" alt="Tirupur Clothing Hub" fill className="object-contain" priority />
+              <div className="relative w-28 h-28 -my-2 sm:my-0 sm:w-32 sm:h-32">
+                <Image src="/logo.png" alt="Tirupur Clothing Hub" fill sizes="(min-width: 640px) 128px, 112px" className="object-contain" priority />
               </div>
             </Link>
 
@@ -281,8 +283,8 @@ export default function Navbar() {
             className="flex items-center justify-between px-6 py-3"
             style={{ borderBottom: `1px solid ${LINE}` }}
           >
-            <div className="relative w-12 h-12">
-              <Image src="/logo.png" alt="Tirupur Clothing Hub" fill className="object-contain" />
+            <div className="relative w-16 h-16">
+              <Image src="/logo.png" alt="Tirupur Clothing Hub" fill sizes="64px" className="object-contain" />
             </div>
             <button
               className="p-2 -mr-2"

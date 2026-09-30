@@ -30,16 +30,15 @@ const FONT_SANS = "'Helvetica Neue', Helvetica, Arial, sans-serif";
 // so it reads as a deliberate accent rather than a full type-system change.
 const FONT_SERIF = "Georgia, 'Times New Roman', serif";
 
-// Featured Collection shows a teaser, not the full catalog
-const FEATURED_LIMIT = 6;
+// New Launches shows a teaser of the latest products, not the full catalog
+const NEW_LAUNCH_LIMIT = 6;
 
 async function getData() {
   await dbConnect();
-  const [banners, bestSellers, topSellers, activeSellers, reviews, reels, combos, categories] = await Promise.all([
+  const [banners, newLaunches, reviews, reels, combos, categories] = await Promise.all([
     Banner.find({ isActive: true }).sort({ sortOrder: 1 }).lean(),
-    Product.find({ isActive: true, isBestSeller: true }).limit(12).lean(),
-    Product.find({ isActive: true, isTopSeller: true }).limit(12).lean(),
-    Product.find({ isActive: true, isActiveSeller: true }).sort({ createdAt: -1 }).limit(12).lean(),
+    // Most recently created active products, newest first
+    Product.find({ isActive: true }).sort({ createdAt: -1 }).limit(NEW_LAUNCH_LIMIT).lean(),
     Review.find({ isApproved: true, isFeatured: true }).populate('product', 'name').limit(10).lean(),
     Reel.find({ isActive: true }).sort({ sortOrder: 1 }).populate('product', 'name slug').limit(10).lean(),
     Combo.find({ isActive: true }).limit(6).lean(),
@@ -48,14 +47,14 @@ async function getData() {
     // into a single category page (no drill-down UI on that page anymore).
     Category.find({ isActive: true, parent: null }).limit(10).lean(),
   ]);
-  return { banners, bestSellers, topSellers, activeSellers, reviews, reels, combos, categories };
+  return { banners, newLaunches, reviews, reels, combos, categories };
 }
 
 export default async function HomePage() {
-  const { banners, bestSellers, topSellers, activeSellers, reviews, reels, combos, categories } = await getData();
+  const { banners, newLaunches, reviews, reels, combos, categories } = await getData();
   const plainCombos = JSON.parse(JSON.stringify(combos));
   const plainCategories = JSON.parse(JSON.stringify(categories));
-  const plainNewArrivals = JSON.parse(JSON.stringify(activeSellers)).slice(0, FEATURED_LIMIT);
+  const plainNewLaunches = JSON.parse(JSON.stringify(newLaunches));
 
   return (
     <div className="overflow-x-hidden bg-white">
@@ -104,7 +103,7 @@ export default async function HomePage() {
       <BannerCarousel banners={JSON.parse(JSON.stringify(banners))} />
 
       {/* Shop by Category */}
-      {plainCategories?.length > 0 && (
+      {/* {plainCategories?.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pt-14 pb-6">
           <h1
             className="text-xl sm:text-2xl font-bold tracking-[3px] uppercase mb-6 text-center"
@@ -118,9 +117,9 @@ export default async function HomePage() {
                 key={c._id}
                 href={`/category/${c.slug}`}
                 className="group flex flex-col items-center text-center"
-              >
+              > */}
                 {/* Circular image */}
-                <div
+                {/* <div
                   className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-neutral-50 transition-transform duration-300 group-hover:scale-105"
                   style={{ border: `1px solid ${GOLD}` }}
                 >
@@ -133,10 +132,10 @@ export default async function HomePage() {
                   ) : (
                     <div className="w-full h-full" style={{ background: GOLD_WASH }} />
                   )}
-                </div>
+                </div> */}
 
                 {/* Label */}
-                <span
+                {/* <span
                   className="mt-2 text-[10.5px] sm:text-[11px] font-bold tracking-wide leading-tight line-clamp-2 max-w-[80px]"
                   style={{ color: INK, fontFamily: FONT_SANS }}
                 >
@@ -146,50 +145,36 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
-      )}
+      )} */}
 
-      {/* Intro / Featured collection — centered copy, up to 6 New Arrivals, CTA */}
-      {/* Top padding reduced (was pt-16) and heading margin removed (was mt-14)
-          to close the big gap under Shop by Category. */}
-      <section className="max-w-6xl mx-auto px-4 pt-8 sm:pt-10 pb-16 text-center">
-        {/* <h2
-          className="text-2xl sm:text-3xl font-bold tracking-[1px]"
-          style={{ color: INK, fontFamily: FONT_SANS }}
-        >
-          Fall in Love with Our Block-Printed Clothing
-        </h2>
+      {/* New Launches — centered heading, up to 6 latest products, CTA.
+          Hidden entirely when there are no products. */}
+      {plainNewLaunches.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 pt-8 sm:pt-10 pb-16 text-center">
+          <h3
+            className="text-lg sm:text-xl font-bold tracking-[3px] uppercase"
+            style={{ color: INK, fontFamily: FONT_SANS }}
+          >
+            New Launches
+          </h3>
 
-        <p className="mt-5 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed font-light" style={{ color: INK_SOFT, fontFamily: FONT_SANS }}>
-          Celebrate femininity and grace. Think intricate designs, vibrant colors, and a touch of
-          cultural elegance. Whether you&rsquo;re heading out for a casual day or dressing up for a
-          special occasion, these pieces are your new best friend.
-        </p> */}
-
-        <h3
-          className="text-lg sm:text-xl font-bold tracking-[3px] uppercase"
-          style={{ color: INK, fontFamily: FONT_SANS }}
-        >
-          Featured Collection
-        </h3>
-
-        {/* Narrowed from 6 columns to 2/3/4 so each ProductCard renders large */}
-        {plainNewArrivals.length > 0 && (
+          {/* 2/3/4 columns so each ProductCard renders large */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mt-8 text-left">
-            {plainNewArrivals.map((p) => (
+            {plainNewLaunches.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}
           </div>
-        )}
 
-        {/* Colors live in classes (not inline style) so the hover state can override them */}
-        <Link
-          href="/products"
-          className="inline-block mt-10 px-8 py-3 text-[12px] font-bold tracking-[2px] uppercase transition-colors bg-black text-[#C9A227] border border-[#C9A227] hover:bg-[#C9A227] hover:text-black"
-          style={{ fontFamily: FONT_SANS }}
-        >
-          Shop the collection
-        </Link>
-      </section>
+          {/* Colors live in classes (not inline style) so the hover state can override them */}
+          <Link
+            href="/products?flag=newarrival"
+            className="inline-block mt-10 px-8 py-3 text-[12px] font-bold tracking-[2px] uppercase transition-colors bg-black text-[#C9A227] border border-[#C9A227] hover:bg-[#C9A227] hover:text-black"
+            style={{ fontFamily: FONT_SANS }}
+          >
+            Shop New Launches
+          </Link>
+        </section>
+      )}
 
       {/* Combo Offers */}
       {plainCombos?.length > 0 && (
