@@ -9,14 +9,15 @@ import { useCart } from './CartContext';
 import { useWishlist } from './WhishlistContext';
 import CouponMarquee from './CouponMarquee';
 
-const INK = '#000000';
-const INK_SOFT = '#6B6B6B';
-const GOLD = '#C9A227';
-const LINE = '#E8E8E8';
-const PAPER = '#FFFFFF';
+// Black navbar palette.
+const BG = '#000000';          // navbar / mobile menu background
+const TEXT = '#FFFFFF';        // primary text and icons
+const TEXT_SOFT = '#A3A3A3';   // secondary text (subcategories)
+const GOLD = '#C9A227';        // accent (underlines, badges, top border)
+const LINE = '#2A2A2A';        // dividers and icon-button borders
+const BADGE_TEXT = '#000000';  // dark text on the gold count badges
 
-// Gold text is hard to read on white, so hover/active states use a gold
-// underline instead of a gold text color.
+// Hover/active states use a gold underline.
 function underlineOn(el) {
   el.style.textDecoration = 'underline';
   el.style.textDecorationColor = GOLD;
@@ -103,14 +104,14 @@ export default function Navbar() {
     <>
       <CouponMarquee />
 
-      <header className="sticky top-0 z-50" style={{ background: PAPER, borderBottom: `1px solid ${LINE}` }}>
+      <header className="sticky top-0 z-50" style={{ background: BG, borderBottom: `1px solid ${LINE}` }}>
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
           <div className="grid grid-cols-3 items-center">
             {/* Left: mobile toggle + primary links */}
             <div className="flex items-center gap-1 justify-self-start">
               <button
                 className="md:hidden p-1.5 -ml-1 sm:p-2 sm:-ml-2"
-                style={{ color: INK }}
+                style={{ color: TEXT }}
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label="Menu"
               >
@@ -121,7 +122,7 @@ export default function Navbar() {
                 <Link
                   href="/"
                   className="text-[13px] font-normal tracking-[1.5px] uppercase transition-colors"
-                  style={{ color: INK }}
+                  style={{ color: TEXT }}
                 >
                   Home
                 </Link>
@@ -130,7 +131,7 @@ export default function Navbar() {
                   <button
                     className="text-[13px] font-normal tracking-[1.5px] uppercase transition-colors"
                     style={{
-                      color: INK,
+                      color: TEXT,
                       textDecoration: shopOpen ? 'underline' : 'none',
                       textDecorationColor: GOLD,
                       textDecorationThickness: '2px',
@@ -143,7 +144,7 @@ export default function Navbar() {
                   {shopOpen && categories.length > 0 && (
                     <div className="absolute left-0 top-full pt-5" style={{ width: '560px' }}>
                       <div
-                        style={{ background: PAPER, borderTop: `1px solid ${GOLD}` }}
+                        style={{ background: BG, borderTop: `1px solid ${GOLD}`, border: `1px solid ${LINE}`, borderTopColor: GOLD }}
                         className="py-6 px-6 max-h-[70vh] overflow-y-auto"
                       >
                         <div className="[column-count:3] gap-8">
@@ -153,7 +154,7 @@ export default function Navbar() {
                                 href={categoryHref(c.slug)}
                                 onClick={() => setShopOpen(false)}
                                 className="py-0.5 text-[13px] font-semibold tracking-wide transition-colors block w-fit"
-                                style={{ color: INK }}
+                                style={{ color: TEXT }}
                                 onMouseEnter={(e) => underlineOn(e.currentTarget)}
                                 onMouseLeave={(e) => underlineOff(e.currentTarget)}
                               >
@@ -168,9 +169,9 @@ export default function Navbar() {
                                       href={categoryHref(sub.slug)}
                                       onClick={() => setShopOpen(false)}
                                       className="py-1 text-[12px] tracking-wide transition-colors"
-                                      style={{ color: INK_SOFT }}
-                                      onMouseEnter={(e) => (e.currentTarget.style.color = INK)}
-                                      onMouseLeave={(e) => (e.currentTarget.style.color = INK_SOFT)}
+                                      style={{ color: TEXT_SOFT }}
+                                      onMouseEnter={(e) => (e.currentTarget.style.color = TEXT)}
+                                      onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_SOFT)}
                                     >
                                       {sub.name}
                                     </Link>
@@ -188,16 +189,14 @@ export default function Navbar() {
                 <Link
                   href="/orders"
                   className="text-[13px] font-normal tracking-[1.5px] uppercase transition-colors"
-                  style={{ color: INK }}
+                  style={{ color: TEXT }}
                 >
                   Orders
                 </Link>
               </nav>
             </div>
 
-            {/* Center: logo — bigger than before (was 56 / 80 / 96px).
-                Now 112px on mobile (with -my-2 so the header bar doesn't
-                grow too tall) and 128px on tablet/desktop. */}
+            {/* Center: logo */}
             <Link href="/" className="flex items-center justify-self-center">
               <div className="relative w-28 h-28 -my-2 sm:my-0 sm:w-32 sm:h-32">
                 <Image src="/logo.png" alt="Tirupur Clothing Hub" fill sizes="(min-width: 640px) 128px, 112px" className="object-contain" priority />
@@ -209,14 +208,14 @@ export default function Navbar() {
               <Link
                 href="/wishlist"
                 className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-colors"
-                style={{ color: INK, border: `1px solid ${LINE}` }}
+                style={{ color: TEXT, border: `1px solid ${LINE}` }}
                 aria-label="Wishlist"
               >
                 <Heart size={14} strokeWidth={1.5} className="sm:w-4 sm:h-4" />
                 {wishlistCount > 0 && (
                   <span
                     className="absolute -top-1 -right-1 text-[8px] sm:text-[9px] font-semibold rounded-full w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] flex items-center justify-center"
-                    style={{ background: GOLD, color: INK }}
+                    style={{ background: GOLD, color: BADGE_TEXT }}
                   >
                     {wishlistCount > 9 ? '9+' : wishlistCount}
                   </span>
@@ -225,7 +224,7 @@ export default function Navbar() {
 
               <button
                 className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-colors"
-                style={{ color: INK, border: `1px solid ${LINE}` }}
+                style={{ color: TEXT, border: `1px solid ${LINE}` }}
                 onClick={() => setSearchOpen((v) => !v)}
                 aria-label="Search"
               >
@@ -235,14 +234,14 @@ export default function Navbar() {
               <Link
                 href="/cart"
                 className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-colors"
-                style={{ color: INK, border: `1px solid ${LINE}` }}
+                style={{ color: TEXT, border: `1px solid ${LINE}` }}
                 aria-label="Cart"
               >
                 <ShoppingBag size={14} strokeWidth={1.5} className="sm:w-4 sm:h-4" />
                 {count > 0 && (
                   <span
                     className="absolute -top-1 -right-1 text-[8px] sm:text-[9px] font-semibold rounded-full w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] flex items-center justify-center"
-                    style={{ background: GOLD, color: INK }}
+                    style={{ background: GOLD, color: BADGE_TEXT }}
                   >
                     {count > 9 ? '9+' : count}
                   </span>
@@ -257,14 +256,14 @@ export default function Navbar() {
               className="flex items-center gap-2 py-3 mb-1"
               style={{ borderTop: `1px solid ${LINE}` }}
             >
-              <Search size={15} strokeWidth={1.5} style={{ color: INK_SOFT }} />
+              <Search size={15} strokeWidth={1.5} style={{ color: TEXT_SOFT }} />
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search kurtis, nighties, innerwear..."
-                className="bg-transparent outline-none w-full text-sm"
-                style={{ color: INK }}
+                className="bg-transparent outline-none w-full text-sm placeholder:text-neutral-500"
+                style={{ color: TEXT }}
               />
             </form>
           )}
@@ -276,7 +275,7 @@ export default function Navbar() {
       {menuOpen && (
         <div
           className="md:hidden fixed inset-0 z-[60] flex flex-col"
-          style={{ background: PAPER }}
+          style={{ background: BG }}
         >
           {/* Overlay header: logo + close button */}
           <div
@@ -288,7 +287,7 @@ export default function Navbar() {
             </div>
             <button
               className="p-2 -mr-2"
-              style={{ color: INK }}
+              style={{ color: TEXT }}
               onClick={closeMobileMenu}
               aria-label="Close menu"
             >
@@ -302,7 +301,7 @@ export default function Navbar() {
               href="/"
               onClick={closeMobileMenu}
               className="py-3.5 text-[14px] tracking-[1.5px] uppercase"
-              style={{ color: INK, borderBottom: `1px solid ${LINE}` }}
+              style={{ color: TEXT, borderBottom: `1px solid ${LINE}` }}
             >
               Home
             </Link>
@@ -310,7 +309,7 @@ export default function Navbar() {
             <div style={{ borderBottom: `1px solid ${LINE}` }}>
               <button
                 className="w-full flex items-center justify-between py-3.5 text-[14px] tracking-[1.5px] uppercase"
-                style={{ color: INK }}
+                style={{ color: TEXT }}
                 onClick={() => setMobileShopOpen((v) => !v)}
               >
                 Shop
@@ -336,7 +335,7 @@ export default function Navbar() {
                             href={categoryHref(c.slug)}
                             onClick={closeMobileMenu}
                             className="flex-1 py-2.5 pl-3 text-[13px] tracking-wide"
-                            style={{ color: INK_SOFT }}
+                            style={{ color: TEXT_SOFT }}
                           >
                             {c.name}
                           </Link>
@@ -350,7 +349,7 @@ export default function Navbar() {
                                 size={12}
                                 strokeWidth={1.5}
                                 style={{
-                                  color: INK_SOFT,
+                                  color: TEXT_SOFT,
                                   transform: isCatOpen ? 'rotate(180deg)' : 'rotate(0deg)',
                                   transition: 'transform 150ms ease',
                                 }}
@@ -367,7 +366,7 @@ export default function Navbar() {
                                 href={categoryHref(sub.slug)}
                                 onClick={closeMobileMenu}
                                 className="py-2 pl-7 text-[12.5px] tracking-wide"
-                                style={{ color: INK_SOFT }}
+                                style={{ color: TEXT_SOFT }}
                               >
                                 {sub.name}
                               </Link>
@@ -385,7 +384,7 @@ export default function Navbar() {
               href="/orders"
               onClick={closeMobileMenu}
               className="flex items-center justify-between py-3.5 text-[14px] tracking-[1.5px] uppercase"
-              style={{ color: INK, borderBottom: `1px solid ${LINE}` }}
+              style={{ color: TEXT, borderBottom: `1px solid ${LINE}` }}
             >
               <span className="flex items-center gap-2.5">
                 <ClipboardList size={16} strokeWidth={1.5} />
@@ -397,7 +396,7 @@ export default function Navbar() {
               href="/wishlist"
               onClick={closeMobileMenu}
               className="flex items-center justify-between py-3.5 text-[14px] tracking-[1.5px] uppercase"
-              style={{ color: INK, borderBottom: `1px solid ${LINE}` }}
+              style={{ color: TEXT, borderBottom: `1px solid ${LINE}` }}
             >
               <span className="flex items-center gap-2.5">
                 <Heart size={16} strokeWidth={1.5} />
@@ -406,7 +405,7 @@ export default function Navbar() {
               {wishlistCount > 0 && (
                 <span
                   className="text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
-                  style={{ background: GOLD, color: INK }}
+                  style={{ background: GOLD, color: BADGE_TEXT }}
                 >
                   {wishlistCount > 9 ? '9+' : wishlistCount}
                 </span>
@@ -417,7 +416,7 @@ export default function Navbar() {
               href="/cart"
               onClick={closeMobileMenu}
               className="flex items-center justify-between py-3.5 text-[14px] tracking-[1.5px] uppercase"
-              style={{ color: INK, borderBottom: `1px solid ${LINE}` }}
+              style={{ color: TEXT, borderBottom: `1px solid ${LINE}` }}
             >
               <span className="flex items-center gap-2.5">
                 <ShoppingBag size={16} strokeWidth={1.5} />
@@ -426,7 +425,7 @@ export default function Navbar() {
               {count > 0 && (
                 <span
                   className="text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
-                  style={{ background: GOLD, color: INK }}
+                  style={{ background: GOLD, color: BADGE_TEXT }}
                 >
                   {count > 9 ? '9+' : count}
                 </span>

@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { Tag, Truck } from 'lucide-react';
 
 // Same tokens as Navbar — keep these two in sync if you tweak the palette.
-// Black announcement bar with gold text.
-const BAR = '#000000';
-const GOLD = '#C9A227';
-const GOLD_FAINT = 'rgba(201, 162, 39, 0.7)';
+// White announcement bar with gold text.
+const BAR = '#FFFFFF';
+const GOLD = '#A8861A'; // deeper gold so it stays readable on white
+const GOLD_FAINT = 'rgba(168, 134, 26, 0.7)';
+const BORDER = 'rgba(168, 134, 26, 0.25)';
 
 // A quiet serif, matched to the wordmark used elsewhere on the site,
 // so the marquee reads as part of the same brand rather than generic UI text.
@@ -38,7 +39,10 @@ export default function CouponMarquee() {
   const items = [...allItems, ...allItems];
 
   return (
-    <div className="relative overflow-hidden py-2" style={{ background: BAR }}>
+    <div
+      className="relative overflow-hidden py-2"
+      style={{ background: BAR, borderBottom: `1px solid ${BORDER}` }}
+    >
       {/* Fade edges */}
       <div
         className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10"
